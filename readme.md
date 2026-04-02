@@ -20,7 +20,7 @@ This example computes SHA256 hashes but the API is more or less identical for al
 
 ``` cpp
 // SHA2 test program
-#include "sha256.h"
+#include <hash-library/sha256.h>
 #include <iostream> // for std::cout only, not needed for hashing library
 
 int main(int, char**)

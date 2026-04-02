@@ -1,31 +1,41 @@
-cmake_minimum_required(VERSION 3.30)
+cmake_minimum_required(VERSION 3.30...4.2)
 
-project(HASH-LIBRARY)
-
-set(CMAKE_CXX_STANDARD 23)
+project(hash-library
+    HOMEPAGE_URL "https://github.com/stbrumme/hash-library"
+    DESCRIPTION
+    "Portable C++ hashing library"
+    LANGUAGES CXX C
+)
 set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
+
+option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
+option(hash-library_BUILD_SHARED_LIB "Build a shared version of hash-library" ${BUILD_SHARED_LIBS})
 
 set(HASH_LIBRARY_SRC
     crc32.cpp
-    crc32.h
     digest.cpp
-    hash.h
-    hmac.h
     keccak.cpp
-    keccak.h
     md5.cpp
-    md5.h
-    readme.md
     sha1.cpp
-    sha1.h
     sha256.cpp
-    sha256.h
     sha3.cpp
-    sha3.h)
-list(TRANSFORM HASH_LIBRARY_SRC PREPEND ${CMAKE_CURRENT_SOURCE_DIR}/)
+)
+list(TRANSFORM HASH_LIBRARY_SRC PREPEND ${CMAKE_CURRENT_SOURCE_DIR}/src/)
 
-add_library(hash-library SHARED ${HASH_LIBRARY_SRC})
+
+if(hash-library_BUILD_SHARED_LIB)
+    add_library(hash-library SHARED)
+else()
+    add_library(hash-library STATIC)
+endif()
 add_library(hash-library::hash-library ALIAS hash-library)
 
-target_include_directories(hash-library PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/)
+target_sources(hash-library PRIVATE ${HASH_LIBRARY_SRC})
+target_sources(hash-library
+    PUBLIC
+    FILE_SET pub_headers
+    TYPE HEADERS
+    BASE_DIRS
+    include/)
 
+target_compile_features(hash-library PRIVATE cxx_std_23)
